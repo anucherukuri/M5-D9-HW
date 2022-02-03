@@ -1,0 +1,330 @@
+openapi: 3.0.1
+info:
+  title: StriveBlogPosts API
+  description: StriveBlogPosts API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001
+    description: Local server
+  - url: https://strive-heroku-test.herokuapp.com/
+    description: Deployed server
+tags:
+  - name: blogPosts
+    description: Operations about blogPosts
+  - name: authors
+    description: Operations about authors
+paths:
+  /blogPosts:
+    get:
+      tags:
+        - blogPosts
+      summary: Returns a list of blogPosts.
+      description: Optional extended description in CommonMark or HTML.
+      parameters:
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Filter blogPosts list by category
+      responses:
+        "200":
+          description: A list of blogPosts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BlogPost"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+    post:
+      tags:
+        - blogPosts
+      summary: Create
+      description: Adds a new blogPost
+      requestBody:
+        description: The object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/blogPost"
+      responses:
+        "201":
+          description: The ID of the newly created blogPost
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+  /blogPosts/{blogPostId}:
+    get:
+      tags:
+        - blogPosts
+      summary: Get by Id
+      description: Retrieve single blogPost
+      parameters:
+        - in: path
+          name: blogPostId
+          required: true
+          schema:
+            type: string
+          description: The ID of the blogPost to retrieve
+      responses:
+        "200":
+          description: The single blogPost
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/blogPost"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+    put:
+      tags:
+        - blogPosts
+      description: Update an existing blogPost
+      summary: Update
+      parameters:
+        - in: path
+          name: blogPostId
+          required: true
+          schema:
+            type: string
+          description: The ID of the blogPost to update
+      requestBody:
+        description: Fields to update
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/blogPost"
+      responses:
+        "200":
+          description: A list of blogPosts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/blogPost"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+    delete:
+      tags:
+        - blogPosts
+      summary: Delete
+      description: Delete a specific blogPost by ID
+      parameters:
+        - in: path
+          name: blogPostId
+          required: true
+          schema:
+            type: string
+          description: The ID of the blogPost to delete
+      responses:
+        "204":
+          description: Empty Response
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+  /blogPosts/upload:
+    post:
+      tags:
+        - blogPosts
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Ok
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /authors:
+    get:
+      tags:
+        - authors
+      summary: Returns a list of authors.
+      description: Optional extended description in CommonMark or HTML.
+      responses:
+        "200":
+          description: A list of authors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/author"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+    post:
+      summary: Create
+      description: Add a new author
+      requestBody:
+        description: The object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/author"
+      responses:
+        "201":
+          description: The ID of the newly created blogPost
+          content:
+            application/json:
+              schema:
+                type: string
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+      tags:
+        - authors
+  /authors/{authorId}:
+    summary: Specific author related endpoints
+    get:
+      summary: Get by Id
+      description: Retrieve single author's data
+      parameters:
+        - in: path
+          name: authorId
+          required: true
+          schema:
+            type: string
+          description: The ID of the author to delete
+      operationId: ""
+      responses:
+        "200":
+          description: The author
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/author"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+      tags:
+        - authors
+    put:
+      summary: Update
+      description: Update an existing author
+      parameters:
+        - in: path
+          name: authorId
+          required: true
+          schema:
+            type: string
+          description: The ID of the author to delete
+      requestBody:
+        description: The object
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/author"
+      responses:
+        "200":
+          description: The modified author
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/author"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+      tags:
+        - authors
+    delete:
+      summary: Delete
+      description: Delete a specific author by Id
+      parameters:
+        - in: path
+          name: authorId
+          required: true
+          schema:
+            type: string
+          description: The ID of the author to delete
+      operationId: ""
+      responses:
+        "204":
+          description: No Content
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/GenericServerError"
+      tags:
+        - authors
+components:
+  responses:
+    NotFound:
+      description: The specific resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    BadRequest:
+      description: Some problems with your request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Bearer token missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    GenericServerError:
+      description: A problem on the server occurred
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    blogPost:
+      type: object
+      properties:
+        asin:
+          type: string
+        title:
+          type: string
+        img:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+    author:
+      type: object
+      properties:
+        _id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        message:
+          type: string
